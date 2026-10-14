@@ -144,7 +144,7 @@ st.write("")
 
 # ---------- Predict button ----------
 if st.button("🔍 Predict Price"):
-        payload = {
+    payload = {
         "property_type": property_type,
         "district": district,
         "land_perches": land_perches,
@@ -174,3 +174,5 @@ if st.button("🔍 Predict Price"):
             st.error("Something went wrong with the prediction. Please try again.")
     except requests.exceptions.RequestException:
         st.error("Could not connect to the backend API. Please try again later.")
+
+st.markdown('<div class="footer-note">Built with FastAPI + Streamlit + Random Forest · Trained on real Sri Lankan property listings</div>', unsafe_allow_html=True)
