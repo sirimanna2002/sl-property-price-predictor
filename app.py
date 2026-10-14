@@ -10,8 +10,6 @@ COLUMNS_PATH = "model_columns.pkl"
 
 if not os.path.exists(MODEL_PATH):
     gdown.download(id="1xk63f_MTT3HWCPHmrHSZKIEEer4mh2ly", output=MODEL_PATH, quiet=False)
-if not os.path.exists(COLUMNS_PATH):
-    gdown.download(id="18zDkxAPR-J2D00qybJ3Hnw5WXLxhCn9_", output=COLUMNS_PATH, quiet=False)
 
 model = joblib.load(MODEL_PATH)
 model_columns = joblib.load(COLUMNS_PATH)

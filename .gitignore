@@ -3,4 +3,4 @@ __pycache__/
 venv/
 .venv/
 *.csv
-*.pkl
+rf_model.pkl
