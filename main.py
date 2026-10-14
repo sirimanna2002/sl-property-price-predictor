@@ -1,27 +1,40 @@
 import os
-import gdown
+import requests as req
+
+def download_from_drive(file_id, destination):
+    URL = "https://drive.google.com/uc?export=download"
+    session = req.Session()
+    response = session.get(URL, params={"id": file_id}, stream=True)
+
+    token = None
+    for key, value in response.cookies.items():
+        if key.startswith("download_warning"):
+            token = value
+
+    if token:
+        response = session.get(URL, params={"id": file_id, "confirm": token}, stream=True)
+
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(32768):
+            if chunk:
+                f.write(chunk)
 
 MODEL_PATH = "rf_model.pkl"
 COLUMNS_PATH = "model_columns.pkl"
 
 if not os.path.exists(MODEL_PATH):
-    gdown.download(id="1xk63f_MTT3HWCPHmrHSZKIEEer4mh2ly", output=MODEL_PATH, quiet=False, fuzzy=True)
-
-if not os.path.exists(COLUMNS_PATH):
-    gdown.download(id="18zDkxAPR-J2D00qybJ3Hnw5WXLxhCn9_", output=COLUMNS_PATH, quiet=False)
+    download_from_drive("1xk63f_MTT3HWCPHmrHSZKIEEer4mh2ly", MODEL_PATH)
 
 import joblib
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-# Model eka saha columns load karanna
 model = joblib.load("rf_model.pkl")
 model_columns = joblib.load("model_columns.pkl")
 
 app = FastAPI()
 
-# User eken ganna ona inputs
 class PropertyInput(BaseModel):
     property_type: str    # "House", "Land", "Apartment"
     district: str          # "Colombo", "Gampaha" etc
