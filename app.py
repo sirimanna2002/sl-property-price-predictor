@@ -144,7 +144,9 @@ st.write("")
 
 # ---------- Predict button ----------
 if st.button("🔍 Predict Price"):
-    input_dict = {
+        payload = {
+        "property_type": property_type,
+        "district": district,
         "land_perches": land_perches,
         "floor_area_sqft": floor_area_sqft,
         "bedrooms": bedrooms,
@@ -154,12 +156,21 @@ if st.button("🔍 Predict Price"):
         "is_agricultural": 1 if land_type == "Agricultural" else 0,
     }
 
-    for col in model_columns:
-        if col.startswith("property_type_"):
-            input_dict[col] = 1 if col == f"property_type_{property_type}" else 0
-        elif col.startswith("district_"):
-            input_dict[col] = 1 if col == f"district_{district}" else 0
-
-    input_df = pd.DataFrame([input_dict])[model_columns]
-    log_pred = model.predict(input_df)[0]
-    price = (2.71828 ** log_pred) - 1
+    try:
+        response = requests.post(
+            "https://sl-property-price-predictor-production.up.railway.app/predict",
+            json=payload,
+            timeout=15
+        )
+        if response.status_code == 200:
+            price = response.json()["predicted_price"]
+            st.markdown(f"""
+                <div class="result-box">
+                    <div class="result-label">Estimated Market Price</div>
+                    <div class="result-price">Rs {price:,.0f}</div>
+                </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.error("Something went wrong with the prediction. Please try again.")
+    except requests.exceptions.RequestException:
+        st.error("Could not connect to the backend API. Please try again later.")
