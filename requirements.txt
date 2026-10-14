@@ -4,5 +4,5 @@ streamlit
 pandas
 scikit-learn==1.6.1
 joblib
-gdown
+gdown>=5.1.0
 requests
