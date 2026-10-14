@@ -90,7 +90,11 @@ Per property-type performance (Random Forest):
 
 ## 📸 Screenshots
 
-*(Add EDA charts and app screenshots here)*
+### Exploratory Data Analysis
+![EDA Charts](screenshots/eda-charts.png)
+
+### App Demo
+![App Screenshot](screenshots/app-demo.png)
 
 ## 👤 Author
 
