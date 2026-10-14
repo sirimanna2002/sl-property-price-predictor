@@ -1,13 +1,12 @@
 # 🏠 Sri Lankan Property Price Predictor
 
-An end-to-end machine learning project that predicts property prices (houses, land, and apartments) across Sri Lanka, built on real listings data. Includes data cleaning, feature engineering, model training, a FastAPI backend, and a Streamlit web app.
+An end-to-end machine learning project that predicts property prices (houses, land, and apartments) across Sri Lanka, built on real listings data. Includes data cleaning, feature engineering, model training, a FastAPI backend, and a Streamlit web app — fully deployed and live.
 
-## 🔗 Live Demo & Model Files
+## 🔗 Live Demo
 
-- **Demo video / screenshots:** see below
-- **Pre-trained model files** (too large for GitHub, hosted on Google Drive):
-  - [rf_model.pkl](https://drive.google.com/file/d/1xk63f_MTT3HWCPHmrHSZKIEEer4mh2ly/view?usp=sharing)
-  - [model_columns.pkl](https://drive.google.com/file/d/18zDkxAPR-J2D00qybJ3Hnw5WXLxhCn9_/view?usp=drive_link)
+- **Web App:** https://sl-property-price-predictor.streamlit.app
+- **API Backend:** https://sl-property-price-predictor-production.up.railway.app
+- **Pre-trained model file:** [rf_model.pkl (GitHub Release)](https://github.com/sirimanna2002/sl-property-price-predictor/releases/download/v1.0/rf_model.pkl)
 
 ## 📊 Problem
 
@@ -28,6 +27,8 @@ Property prices in Sri Lanka vary enormously depending on district, size, and pr
 
 ## 📈 Exploratory Data Analysis
 
+![EDA Charts](screenshots/eda-charts.png)
+
 | Property Type | Median Price |
 |---|---|
 | Apartment | Rs 52,000,000 |
@@ -36,7 +37,7 @@ Property prices in Sri Lanka vary enormously depending on district, size, and pr
 
 Key findings:
 - Colombo and Kandy have the highest median prices
-- House prices scale strongly with bedrooms and floor area
+- House prices scale strongly with bedrooms, bathrooms, and floor area
 - Land prices vary widely even within the same perch range, suggesting location/road-access factors not captured in this dataset
 
 ## 🤖 Model
@@ -62,9 +63,21 @@ Per property-type performance (Random Forest):
 
 - **Data processing:** Python, Pandas, NumPy
 - **Modeling:** Scikit-learn (Random Forest, Linear Regression)
-- **Backend API:** FastAPI
-- **Frontend:** Streamlit
-- **Development:** Google Colab, VS Code
+- **Backend API:** FastAPI — deployed on [Railway](https://railway.com)
+- **Frontend:** Streamlit — deployed on [Streamlit Community Cloud](https://streamlit.io/cloud)
+- **Development:** Google Colab, VS Code, Git
+
+## 🏗️ Architecture
+
+```
+User → Streamlit App (Streamlit Cloud)
+            │
+            ▼ REST API call
+     FastAPI Backend (Railway)
+            │
+            ▼
+  Random Forest Model (loaded from GitHub Release)
+```
 
 ## 🚀 Running Locally
 
@@ -73,25 +86,23 @@ Per property-type performance (Random Forest):
    git clone https://github.com/sirimanna2002/sl-property-price-predictor.git
    cd sl-property-price-predictor
 ```
-2. Download `rf_model.pkl` and `model_columns.pkl` from the Drive links above and place them in the project folder.
-3. Install dependencies:
+2. Install dependencies:
 ```
-   pip install fastapi uvicorn scikit-learn joblib pandas streamlit requests
+   pip install -r requirements.txt
 ```
-4. Start the backend (terminal 1):
+3. Start the backend (terminal 1) — this will auto-download the model file on first run:
 ```
    uvicorn main:app --reload
 ```
-5. Start the frontend (terminal 2):
+4. Start the frontend (terminal 2):
 ```
    streamlit run app.py
 ```
-6. Open the Streamlit app in your browser and get instant price predictions.
+5. Open the Streamlit app in your browser and get instant price predictions.
+
+> Note: `app.py` in this repo calls the live Railway API by default. To test fully offline, point the `requests.post(...)` URL in `app.py` to `http://127.0.0.1:8000/predict` instead.
 
 ## 📸 Screenshots
-
-### Exploratory Data Analysis
-![EDA Charts](screenshots/eda-charts.png)
 
 ### App Demo
 ![App Screenshot](screenshots/app-demo.png)
