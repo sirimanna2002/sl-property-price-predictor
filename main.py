@@ -1,31 +1,17 @@
 import os
 import requests as req
 
-def download_from_drive(file_id, destination):
-    URL = "https://drive.google.com/uc?export=download"
-    session = req.Session()
-    response = session.get(URL, params={"id": file_id}, stream=True)
-
-    token = None
-    for key, value in response.cookies.items():
-        if key.startswith("download_warning"):
-            token = value
-
-    if token:
-        response = session.get(URL, params={"id": file_id, "confirm": token}, stream=True)
-
-    with open(destination, "wb") as f:
-        for chunk in response.iter_content(32768):
-            if chunk:
-                f.write(chunk)
-
 MODEL_PATH = "rf_model.pkl"
 COLUMNS_PATH = "model_columns.pkl"
 
-if not os.path.exists(MODEL_PATH):
-    download_from_drive("1xk63f_MTT3HWCPHmrHSZKIEEer4mh2ly", MODEL_PATH)
+MODEL_URL = "https://github.com/sirimanna2002/sl-property-price-predictor/releases/download/v1.0/rf_model.pkl"
 
-print(f"DEBUG: rf_model.pkl size = {os.path.getsize(MODEL_PATH)} bytes", flush=True)
+if not os.path.exists(MODEL_PATH):
+    r = req.get(MODEL_URL, stream=True)
+    with open(MODEL_PATH, "wb") as f:
+        for chunk in r.iter_content(32768):
+            if chunk:
+                f.write(chunk)
 
 import joblib
 import pandas as pd
