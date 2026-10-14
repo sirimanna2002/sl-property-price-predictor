@@ -25,6 +25,8 @@ COLUMNS_PATH = "model_columns.pkl"
 if not os.path.exists(MODEL_PATH):
     download_from_drive("1xk63f_MTT3HWCPHmrHSZKIEEer4mh2ly", MODEL_PATH)
 
+print(f"DEBUG: rf_model.pkl size = {os.path.getsize(MODEL_PATH)} bytes", flush=True)
+
 import joblib
 import pandas as pd
 from fastapi import FastAPI
