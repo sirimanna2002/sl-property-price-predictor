@@ -1,5 +1,20 @@
 import streamlit as st
-import requests
+import pandas as pd
+import joblib
+import os
+import gdown
+
+# ---------- Load model (auto-download from Drive if not present) ----------
+MODEL_PATH = "rf_model.pkl"
+COLUMNS_PATH = "model_columns.pkl"
+
+if not os.path.exists(MODEL_PATH):
+    gdown.download(id="1xk63f_MTT3HWCPHmrHSZKIEEer4mh2ly", output=MODEL_PATH, quiet=False)
+if not os.path.exists(COLUMNS_PATH):
+    gdown.download(id="18zDkxAPR-J2D00qybJ3Hnw5WXLxhCn9_", output=COLUMNS_PATH, quiet=False)
+
+model = joblib.load(MODEL_PATH)
+model_columns = joblib.load(COLUMNS_PATH)
 
 st.set_page_config(
     page_title="SL Property Price Predictor",
@@ -131,9 +146,7 @@ st.write("")
 
 # ---------- Predict button ----------
 if st.button("🔍 Predict Price"):
-    payload = {
-        "property_type": property_type,
-        "district": district,
+    input_dict = {
         "land_perches": land_perches,
         "floor_area_sqft": floor_area_sqft,
         "bedrooms": bedrooms,
@@ -143,19 +156,12 @@ if st.button("🔍 Predict Price"):
         "is_agricultural": 1 if land_type == "Agricultural" else 0,
     }
 
-    try:
-        response = requests.post("http://127.0.0.1:8000/predict", json=payload)
-        if response.status_code == 200:
-            price = response.json()["predicted_price"]
-            st.markdown(f"""
-                <div class="result-box">
-                    <div class="result-label">Estimated Market Price</div>
-                    <div class="result-price">Rs {price:,.0f}</div>
-                </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.error("Something went wrong with the prediction. Please try again.")
-    except requests.exceptions.ConnectionError:
-        st.error("Could not connect to the backend. Make sure the FastAPI server (uvicorn) is running.")
+    for col in model_columns:
+        if col.startswith("property_type_"):
+            input_dict[col] = 1 if col == f"property_type_{property_type}" else 0
+        elif col.startswith("district_"):
+            input_dict[col] = 1 if col == f"district_{district}" else 0
 
-st.markdown('<div class="footer-note">Built with FastAPI + Streamlit + Random Forest · Trained on real Sri Lankan property listings</div>', unsafe_allow_html=True)
+    input_df = pd.DataFrame([input_dict])[model_columns]
+    log_pred = model.predict(input_df)[0]
+    price = (2.71828 ** log_pred) - 1
