@@ -172,8 +172,8 @@ if st.button("🔍 Predict Price"):
                 </div>
             """, unsafe_allow_html=True)
         else:
-            st.error("Something went wrong with the prediction. Please try again.")
-    except requests.exceptions.RequestException:
-        st.error("Could not connect to the backend API. Please try again later.")
+            st.error(f"Status: {response.status_code} — {response.text}")
+    except requests.exceptions.RequestException as e:
+        st.error(f"Connection error: {e}")
 
 st.markdown('<div class="footer-note">Built with FastAPI + Streamlit + Random Forest · Trained on real Sri Lankan property listings</div>', unsafe_allow_html=True)
