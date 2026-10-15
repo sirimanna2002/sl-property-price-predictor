@@ -59,6 +59,10 @@ Per property-type performance (Random Forest):
 
 **Limitation:** Land price predictions are less accurate, since the dataset doesn't capture road access, plot shape, or exact micro-location — factors that strongly affect land value in Sri Lanka.
 
+## 📓 Notebook
+
+The full data cleaning, exploratory analysis, and model training process is available in [`property_price_prediction.ipynb`](property_price_prediction.ipynb).
+
 ## 🛠️ Tech Stack
 
 - **Data processing:** Python, Pandas, NumPy
