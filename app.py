@@ -1,19 +1,6 @@
 import streamlit as st
 import requests
 import pandas as pd
-import joblib
-import os
-import gdown
-
-# ---------- Load model (auto-download from Drive if not present) ----------
-MODEL_PATH = "rf_model.pkl"
-COLUMNS_PATH = "model_columns.pkl"
-
-if not os.path.exists(MODEL_PATH):
-    gdown.download(id="1xk63f_MTT3HWCPHmrHSZKIEEer4mh2ly", output=MODEL_PATH, quiet=False)
-
-model = joblib.load(MODEL_PATH)
-model_columns = joblib.load(COLUMNS_PATH)
 
 st.set_page_config(
     page_title="SL Property Price Predictor",
